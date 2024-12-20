@@ -2277,17 +2277,19 @@ public class PgResultSet implements ResultSet, PGRefCursorResultSet {
           PSQLState.INVALID_CURSOR_STATE);
     }
 
-    if (currentRow + 1 >= rows.size()) {
+    final int rowsSize = rows.size();
+
+    if (currentRow + 1 >= rowsSize) {
       ResultCursor cursor = this.cursor;
-      if (cursor == null || (maxRows > 0 && rowOffset + rows.size() >= maxRows)) {
-        currentRow = rows.size();
+      if (cursor == null || (maxRows > 0 && rowOffset + rowsSize >= maxRows)) {
+        currentRow = rowsSize;
         thisRow = null;
         rowBuffer = null;
         return false; // End of the resultset.
       }
 
       // Ask for some more data.
-      rowOffset += rows.size(); // We are discarding some data.
+      rowOffset += rowsSize; // We are discarding some data.
 
       int fetchRows = fetchSize;
       int adaptiveFetchRows = connection.getQueryExecutor()
